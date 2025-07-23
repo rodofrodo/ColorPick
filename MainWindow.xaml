@@ -4,11 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ColorPick"
-        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="MainWindow" Height="679" Width="700"
         WindowStyle="None"
-        AllowsTransparency="False"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        Background="{x:Null}" AllowsTransparency="True">
+    <Grid>
+        <Image HorizontalAlignment="Left" Height="679" Margin="0,0,0,0" VerticalAlignment="Top" Width="700" Source="/Resources/colorpick_bg.png"/>
+        <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="700" Height="35" MouseLeftButtonDown="OnMouseLeft_TitleBar"/>
 
+    </Grid>
 </Window>
