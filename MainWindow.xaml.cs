@@ -26,11 +26,10 @@ namespace ColorPick
             InitializeComponent();
         }
 
-        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void OnMouseLeft_TitleBar(object sender, MouseButtonEventArgs e)
         {
             if (e.ButtonState == MouseButtonState.Pressed)
                 DragMove();
         }
-
     }
 }
