@@ -109,5 +109,8 @@
   <ItemGroup>
     <Resource Include="Resources\colorpick_bg.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\triumvirate_logo_small.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
