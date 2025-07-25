@@ -6,12 +6,22 @@
         xmlns:local="clr-namespace:ColorPick"
         mc:Ignorable="d"
         Title="MainWindow" Height="679" Width="700"
+        ResizeMode="CanMinimize"
         WindowStyle="None"
         WindowStartupLocation="CenterScreen"
         Background="{x:Null}" AllowsTransparency="True">
     <Grid>
         <Image HorizontalAlignment="Left" Height="679" Margin="0,0,0,0" VerticalAlignment="Top" Width="700" Source="/Resources/colorpick_bg.png"/>
         <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="700" Height="35" MouseLeftButtonDown="OnMouseLeft_TitleBar"/>
-
+        <Image HorizontalAlignment="Left" Height="16" Margin="657,10,0,0" VerticalAlignment="Top" Width="32" Source="/Resources/EXIT_BTN.png"/>
+        <Image HorizontalAlignment="Left" Height="16" Margin="620,10,0,0" VerticalAlignment="Top" Width="32" Source="/Resources/MINI_BTN.png"/>
+        <Label x:Name="appname" Content="ColorPick" HorizontalAlignment="Left" Margin="51,35,0,0" VerticalAlignment="Top" FontFamily="Product Sans" FontWeight="Bold" FontSize="40">
+            <Label.Foreground>
+                <LinearGradientBrush x:Name="LGB_colorpick" StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#5E0000" Offset="0"/>
+                    <GradientStop Color="#4C0070" Offset=".8"/>
+                </LinearGradientBrush>
+            </Label.Foreground>
+        </Label>
     </Grid>
 </Window>
