@@ -100,7 +100,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\EXIT_BTN.png" />
+    <Resource Include="Resources\EXIT_HOV.png" />
+    <Resource Include="Resources\MINI_BTN.png" />
+    <Resource Include="Resources\MINI_HOV.png" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\colorpick_bg.png" />
   </ItemGroup>
