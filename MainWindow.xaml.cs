@@ -31,5 +31,50 @@ namespace ColorPick
             if (e.ButtonState == MouseButtonState.Pressed)
                 DragMove();
         }
+
+        private BitmapImage GetBitmapFromFile(string fileName)
+        {
+            // Visual Studio couldn't let me do in one line so it's 4-line method
+            return new BitmapImage(new Uri($"pack://application:,,,/ColorPick;component/{fileName}"));
+        }
+
+        private void OnMouseEnter_MINI(object sender, MouseEventArgs e)
+        {
+            mini_btn.Source = GetBitmapFromFile("Resources/MINI_HOV.png");
+            Cursor = Cursors.Hand;
+        }
+
+        private void OnMouseLeave_MINI(object sender, MouseEventArgs e)
+        {
+            mini_btn.Source = GetBitmapFromFile("Resources/MINI_BTN.png");
+            Cursor = Cursors.Arrow;
+        }
+
+        private void OnMouseDown_MINI(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+                WindowState = WindowState.Minimized;
+        }
+
+        private void OnMouseEnter_EXIT(object sender, MouseEventArgs e)
+        {
+            exit_btn.Source = GetBitmapFromFile("Resources/EXIT_HOV.png");
+            Cursor = Cursors.Hand;
+        }
+
+        private void OnMouseLeave_EXIT(object sender, MouseEventArgs e)
+        {
+            exit_btn.Source = GetBitmapFromFile("Resources/EXIT_BTN.png");
+            Cursor = Cursors.Arrow;
+        }
+
+        private void OnMouseDown_EXIT(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                Hide();
+                Environment.Exit(0);
+            }
+        }
     }
 }
