@@ -24,8 +24,19 @@
             </Label.Foreground>
         </Label>
         <Image x:Name="triumvirate" HorizontalAlignment="Left" Height="15" Margin="260,57,0,0" VerticalAlignment="Top" Width="132" Source="/Resources/triumvirate_logo_small.png"/>
+        <!-- The preview color box -->
+        <Border Width="182" Height="182" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="72,135,0,0" 
+            CornerRadius="15" ClipToBounds="True" BorderBrush="White" BorderThickness="2">
+            <Grid>
+                <Rectangle RadiusX="15" RadiusY="15">
+                    <Rectangle.Fill>
+                        <SolidColorBrush Color="Red"/>
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Grid>
+        </Border>
         <!-- The color picker box -->
-        <Border Width="346" Height="182" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="283,152,0,0" 
+        <Border Width="345" Height="182" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="283,135,0,0" 
                 CornerRadius="15" ClipToBounds="True" BorderBrush="White" BorderThickness="2">
             <Grid x:Name="ColorBox">
                 <Rectangle RadiusX="15" RadiusY="15">
@@ -53,13 +64,14 @@
                 </Rectangle>
                 <!-- Selection marker -->
                 <Ellipse x:Name="PickerMarker"
-                 Width="24" Height="24"
-                 Stroke="White" StrokeThickness="5"
+                 Width="20" Height="20"
+                 Stroke="White" StrokeThickness="3"
                  Fill="Transparent"
                  HorizontalAlignment="Right"
                  VerticalAlignment="Top"
                  Margin="0,0,0,0"/>
             </Grid>
         </Border>
+        
     </Grid>
 </Window>
