@@ -37,7 +37,7 @@
         </Border>
         <!-- The color picker box -->
         <Border Width="345" Height="182" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="283,135,0,0" 
-                CornerRadius="15" ClipToBounds="True" BorderBrush="White" BorderThickness="2">
+                CornerRadius="15" ClipToBounds="True" BorderBrush="White">
             <Grid x:Name="ColorBox">
                 <Rectangle RadiusX="15" RadiusY="15">
                     <Rectangle.Fill>
@@ -64,8 +64,8 @@
                 </Rectangle>
                 <!-- Selection marker -->
                 <Ellipse x:Name="PickerMarker"
-                 Width="20" Height="20"
-                 Stroke="White" StrokeThickness="3"
+                 Width="24" Height="24"
+                 Stroke="White" StrokeThickness="5"
                  Fill="Transparent"
                  HorizontalAlignment="Right"
                  VerticalAlignment="Top"
