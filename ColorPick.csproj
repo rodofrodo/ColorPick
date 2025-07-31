@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>colorpick_ico.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="PresentationFramework.Aero2" />
@@ -111,6 +114,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\triumvirate_logo_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="colorpick_ico.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
