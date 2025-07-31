@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ColorPick"
         mc:Ignorable="d"
-        Title="MainWindow" Height="679" Width="700"
+        Title="ColorPick" Height="679" Width="700"
         ResizeMode="CanMinimize"
         WindowStyle="None"
         WindowStartupLocation="CenterScreen"
@@ -73,7 +73,7 @@
             </Grid>
         </Border>
         <!-- The rainbow -->
-        <Border Width="556" Height="8" CornerRadius="5" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="72,340,0,0">
+        <Border Width="556" Height="8" CornerRadius="5" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="72,352,0,0">
             <Grid>
                 <!-- Hue gradient bar -->
                 <Rectangle RadiusX="5" RadiusY="5">
@@ -98,7 +98,7 @@
                 </Rectangle>
             </Grid>
         </Border>
-        <Grid Width="556" Height="24" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,332,0,0">
+        <Grid Width="556" Height="24" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,344,0,0">
             <!-- Selection ellipse -->
             <Ellipse Height="24"
              HorizontalAlignment="Left"
@@ -106,5 +106,13 @@
              Stroke="White" StrokeThickness="5"
              Fill="Red" Width="24" Margin="0,0,0,0"/>
         </Grid>
+        <!-- Text blocks with values -->
+        <TextBlock HorizontalAlignment="Left" Margin="86,408,0,0" TextWrapping="Wrap" Text="HEX" VerticalAlignment="Top" FontFamily="Inter" Foreground="White" FontSize="20" FontWeight="Bold"/>
+        <TextBlock HorizontalAlignment="Left" Margin="86,460,0,0" TextWrapping="Wrap" Text="RGB" VerticalAlignment="Top" FontFamily="Inter" Foreground="White" FontSize="20" FontWeight="Bold"/>
+        <TextBlock HorizontalAlignment="Left" Margin="86,512,0,0" TextWrapping="Wrap" Text="CMYK" VerticalAlignment="Top" FontFamily="Inter" Foreground="White" FontSize="20" FontWeight="Bold"/>
+        <!-- Buttons -->
+        <Border Width="166" Height="42" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="72,584,0,0" CornerRadius="25">
+            <Rectangle RadiusX="25" RadiusY="25" Fill="White"/>
+        </Border>
     </Grid>
 </Window>
