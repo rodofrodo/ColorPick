@@ -110,9 +110,20 @@
         <TextBlock HorizontalAlignment="Left" Margin="86,408,0,0" TextWrapping="Wrap" Text="HEX" VerticalAlignment="Top" FontFamily="Inter" Foreground="White" FontSize="20" FontWeight="Bold"/>
         <TextBlock HorizontalAlignment="Left" Margin="86,460,0,0" TextWrapping="Wrap" Text="RGB" VerticalAlignment="Top" FontFamily="Inter" Foreground="White" FontSize="20" FontWeight="Bold"/>
         <TextBlock HorizontalAlignment="Left" Margin="86,512,0,0" TextWrapping="Wrap" Text="CMYK" VerticalAlignment="Top" FontFamily="Inter" Foreground="White" FontSize="20" FontWeight="Bold"/>
+        <TextBlock HorizontalAlignment="Left" Margin="371,408,0,0" TextWrapping="Wrap" Text="HSV" VerticalAlignment="Top" FontFamily="Inter" Foreground="White" FontSize="20" FontWeight="Bold"/>
+        <TextBlock HorizontalAlignment="Left" Margin="371,460,0,0" TextWrapping="Wrap" Text="HSL" VerticalAlignment="Top" FontFamily="Inter" Foreground="White" FontSize="20" FontWeight="Bold"/>
         <!-- Buttons -->
-        <Border Width="166" Height="42" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="72,584,0,0" CornerRadius="25">
-            <Rectangle RadiusX="25" RadiusY="25" Fill="White"/>
+        <Border Width="167" Height="42" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="72,584,0,0">
+            <Grid>
+                <Image Source="/Resources/white_round_rect.png"/>
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Pick a color" FontFamily="Inter" Foreground="Black" FontSize="20" FontWeight="Bold"/>
+            </Grid>
+        </Border>
+        <Border Width="118" Height="42" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="253,584,0,0">
+            <Grid>
+                <Image Source="/Resources/gray_round_rect.png"/>
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Palette" FontFamily="Inter" Foreground="White" FontSize="20" FontWeight="Bold"/>
+            </Grid>
         </Border>
     </Grid>
 </Window>
