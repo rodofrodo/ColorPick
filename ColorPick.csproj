@@ -118,5 +118,11 @@
   <ItemGroup>
     <Resource Include="colorpick_ico.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\white_round_rect.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\gray_round_rect.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
