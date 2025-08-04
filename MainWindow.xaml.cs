@@ -109,5 +109,15 @@ namespace ColorPick
             pickColorLbl.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#000000"));
             AnimateBorder(false, pickColorBtn);
         }
+
+        private void OnMouseEnter_PaletteBtn(object sender, MouseEventArgs e)
+        {
+            paletteBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#333333"));
+        }
+
+        private void OnMouseLeave_PaletteBtn(object sender, MouseEventArgs e)
+        {
+            paletteBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#202020"));
+        }
     }
 }
