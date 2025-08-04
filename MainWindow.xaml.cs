@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -24,6 +25,7 @@ namespace ColorPick
         public MainWindow()
         {
             InitializeComponent();
+            pickColorBtn.BorderThickness = new Thickness(0);
         }
 
         private void OnMouseLeft_TitleBar(object sender, MouseButtonEventArgs e)
@@ -76,5 +78,29 @@ namespace ColorPick
                 Environment.Exit(0);
             }
         }
+
+        /// <summary>
+        /// Animates the border
+        /// </summary>
+        /// <param name="start">Fires an animation; otherwise: goes back</param>
+        /// <param name="border">The border getting animation</param>
+        private void AnimateBorder(bool start, Border border)
+        {
+            Storyboard st = new Storyboard();
+            ThicknessAnimation animation = new ThicknessAnimation
+            {
+                From = start ? new Thickness(0) : new Thickness(3),
+                To = start ? new Thickness(3) : new Thickness(0),
+                Duration = new Duration(TimeSpan.FromMilliseconds(150))
+            };
+            Storyboard.SetTargetProperty(animation, new PropertyPath(Border.BorderThicknessProperty));
+            st.Children.Add(animation);
+            border.BeginStoryboard(st);
+        }
+
+        private void OnMouseEnter_PickBtn(object sender, MouseEventArgs e) => AnimateBorder(true, pickColorBtn);
+        private void OnMouseLeave_PickBtn(object sender, MouseEventArgs e) => AnimateBorder(false, pickColorBtn);
+
+
     }
 }
