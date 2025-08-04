@@ -129,11 +129,34 @@
                  VerticalAlignment="Top" Width="173" TextAlignment="Right" FontFamily="Inter" FontSize="14" 
                  Background="{x:Null}" Foreground="White" BorderThickness="0"/>
         <!-- Buttons -->
-        <Border Width="167" Height="42" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="72,584,0,0">
-            <Grid>
-                <Image Source="/Resources/white_round_rect.png"/>
-                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Pick a color" FontFamily="Inter" Foreground="Black" FontSize="20" FontWeight="Bold"/>
-            </Grid>
+
+        <Border x:Name="pickColorBtn" BorderThickness="3" CornerRadius="20" 
+                HorizontalAlignment="Left" VerticalAlignment="Top" Margin="72,584,0,0"
+                Width="167" Height="42" Background="White" MouseEnter="OnMouseEnter_PickBtn" MouseLeave="OnMouseLeave_PickBtn">
+            <Border.BorderBrush>
+                <LinearGradientBrush x:Name="LGB" StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#FF0000" Offset="1"/>
+                    <GradientStop Color="#FC65FF" Offset=".5"/>
+                    <GradientStop Color="#4D009A" Offset="0"/>
+                </LinearGradientBrush>
+            </Border.BorderBrush>
+            <Border.Triggers>
+                <EventTrigger RoutedEvent="Border.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <PointAnimation Storyboard.TargetName="LGB" 
+                        Storyboard.TargetProperty="StartPoint" 
+                        From="0,0" To="1,0" Duration="00:00:2"
+                        AutoReverse="True" RepeatBehavior="Forever"/>
+                            <PointAnimation Storyboard.TargetName="LGB" 
+                        Storyboard.TargetProperty="EndPoint" 
+                        From="1,1" To="0,1" Duration="00:00:2"
+                        AutoReverse="True" RepeatBehavior="Forever"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Border.Triggers>
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Pick a color" FontFamily="Inter" Foreground="Black" FontSize="20" FontWeight="Bold"/>
         </Border>
         <Border Width="118" Height="42" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="253,584,0,0">
             <Grid>
