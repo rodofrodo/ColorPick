@@ -98,9 +98,16 @@ namespace ColorPick
             border.BeginStoryboard(st);
         }
 
-        private void OnMouseEnter_PickBtn(object sender, MouseEventArgs e) => AnimateBorder(true, pickColorBtn);
-        private void OnMouseLeave_PickBtn(object sender, MouseEventArgs e) => AnimateBorder(false, pickColorBtn);
+        private void OnMouseEnter_PickBtn(object sender, MouseEventArgs e)
+        {
+            pickColorLbl.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#464646"));
+            AnimateBorder(true, pickColorBtn);
+        }
 
-
+        private void OnMouseLeave_PickBtn(object sender, MouseEventArgs e)
+        {
+            pickColorLbl.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#000000"));
+            AnimateBorder(false, pickColorBtn);
+        }
     }
 }
