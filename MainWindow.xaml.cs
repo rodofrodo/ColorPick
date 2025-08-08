@@ -119,5 +119,79 @@ namespace ColorPick
         {
             paletteBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#202020"));
         }
+
+        // ---
+        private bool isDragging = false;
+        private Point clickPosition;
+        private bool isDraggingHue = false;
+        private Point clickPositionHue;
+
+        private void Ellipse_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            isDragging = true;
+            var ellipse = sender as Ellipse;
+            clickPosition = e.GetPosition(ellipse);
+            ellipse.CaptureMouse();
+        }
+
+        private void Ellipse_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (!isDragging) return;
+
+            var ellipse = sender as Ellipse;
+            var canvas = ellipse.Parent as Canvas;
+
+            Point mousePos = e.GetPosition(canvas);
+
+            double left = mousePos.X - clickPosition.X;
+            double top = mousePos.Y - clickPosition.Y;
+
+            // Clamp inside the canvas
+            left = Math.Max(0, Math.Min(left, canvas.ActualWidth - ellipse.ActualWidth));
+            top = Math.Max(0, Math.Min(top, canvas.ActualHeight - ellipse.ActualHeight));
+
+            Canvas.SetLeft(ellipse, left);
+            Canvas.SetTop(ellipse, top);
+        }
+
+        private void Ellipse_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            isDragging = false;
+            var ellipse = sender as Ellipse;
+            ellipse.ReleaseMouseCapture();
+        }
+
+        private void HuePicker_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            isDraggingHue = true;
+            var ellipse = sender as Ellipse;
+            clickPositionHue = e.GetPosition(ellipse);
+            ellipse.CaptureMouse();
+        }
+
+        private void HuePicker_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (!isDraggingHue) return;
+
+            var ellipse = sender as Ellipse;
+            var canvas = ellipse.Parent as Canvas;
+
+            Point mousePos = e.GetPosition(canvas);
+
+            double left = mousePos.X - clickPositionHue.X;
+
+            // Clamp horizontally inside canvas bounds
+            left = Math.Max(0, Math.Min(left, canvas.ActualWidth - ellipse.ActualWidth));
+
+            // Set horizontal position only, vertical stays fixed
+            Canvas.SetLeft(ellipse, left);
+        }
+
+        private void HuePicker_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            isDraggingHue = false;
+            var ellipse = sender as Ellipse;
+            ellipse.ReleaseMouseCapture();
+        }
     }
 }
