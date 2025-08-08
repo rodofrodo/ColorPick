@@ -191,6 +191,7 @@ namespace ColorPick
 
             // Get interpolated color at relativePos
             Color color = InterpolateColor(officialGradient, relativePos);
+            ColorRect.Fill = new SolidColorBrush(color);
 
             // Set ellipse fill
             ellipse.Fill = new SolidColorBrush(color);
