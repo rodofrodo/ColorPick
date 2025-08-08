@@ -63,13 +63,17 @@
                     </Rectangle.Fill>
                 </Rectangle>
                 <!-- Selection marker -->
-                <Ellipse x:Name="PickerMarker"
-                 Width="24" Height="24"
-                 Stroke="White" StrokeThickness="5"
-                 Fill="Transparent"
-                 HorizontalAlignment="Right"
-                 VerticalAlignment="Top"
-                 Margin="0,0,0,0"/>
+                <Canvas HorizontalAlignment="Right" Width="345" Height="182"
+                        VerticalAlignment="Top">
+                    <Ellipse
+                         Canvas.Right="0" Canvas.Top="0"
+                         Width="24" Height="24"
+                         Stroke="White" StrokeThickness="5"
+                         Fill="Transparent"
+                         MouseDown="Ellipse_MouseDown"
+                         MouseMove="Ellipse_MouseMove"
+                         MouseUp="Ellipse_MouseUp"/>
+                </Canvas>
             </Grid>
         </Border>
         <!-- The rainbow -->
@@ -100,11 +104,17 @@
         </Border>
         <Grid Width="556" Height="24" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,344,0,0">
             <!-- Selection ellipse -->
-            <Ellipse Height="24"
-             HorizontalAlignment="Left"
-             VerticalAlignment="Center"
-             Stroke="White" StrokeThickness="5"
-             Fill="Red" Width="24" Margin="0,0,0,0"/>
+            <Canvas Width="556" Height="24">
+                <Ellipse Height="24"
+                     HorizontalAlignment="Left"
+                     VerticalAlignment="Center"
+                     Stroke="White" StrokeThickness="5"
+                     Fill="Transparent" Width="24"
+                     Canvas.Left="0" Canvas.Top="0"
+                     MouseDown="HuePicker_MouseDown"
+                     MouseMove="HuePicker_MouseMove"
+                     MouseUp="HuePicker_MouseUp"/>
+            </Canvas>
         </Grid>
         <!-- Text blocks with values -->
         <TextBlock HorizontalAlignment="Left" Margin="79,408,0,0" TextWrapping="Wrap" Text="HEX" VerticalAlignment="Top" FontFamily="Inter" Foreground="White" FontSize="20" FontWeight="Bold"/>
