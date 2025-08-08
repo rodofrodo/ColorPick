@@ -185,6 +185,15 @@ namespace ColorPick
 
             // Set horizontal position only, vertical stays fixed
             Canvas.SetLeft(ellipse, left);
+
+            // Calculate relative position 0..1 across the gradient
+            double relativePos = left / (canvas.ActualWidth - ellipse.ActualWidth);
+
+            // Get interpolated color at relativePos
+            Color color = InterpolateColor(officialGradient, relativePos);
+
+            // Set ellipse fill
+            ellipse.Fill = new SolidColorBrush(color);
         }
 
         private void HuePicker_MouseUp(object sender, MouseButtonEventArgs e)
@@ -192,6 +201,43 @@ namespace ColorPick
             isDraggingHue = false;
             var ellipse = sender as Ellipse;
             ellipse.ReleaseMouseCapture();
+        }
+
+        private Color InterpolateColor(LinearGradientBrush brush, double offset)
+        {
+            // Clamp offset
+            offset = Math.Max(0, Math.Min(1, offset));
+
+            GradientStop before = brush.GradientStops[0];
+            GradientStop after = brush.GradientStops[brush.GradientStops.Count - 1];
+
+            // Find gradient stops around offset
+            foreach (GradientStop gs in brush.GradientStops)
+            {
+                if (gs.Offset <= offset)
+                    before = gs;
+                if (gs.Offset >= offset)
+                {
+                    after = gs;
+                    break;
+                }
+            }
+
+            // If offset is exactly on a stop
+            if (before == after)
+                return before.Color;
+
+            // Calculate interpolation fraction between before.Offset and after.Offset
+            double range = after.Offset - before.Offset;
+            double fraction = (offset - before.Offset) / range;
+
+            // Interpolate each ARGB channel
+            byte a = (byte)(before.Color.A + (after.Color.A - before.Color.A) * fraction);
+            byte r = (byte)(before.Color.R + (after.Color.R - before.Color.R) * fraction);
+            byte g = (byte)(before.Color.G + (after.Color.G - before.Color.G) * fraction);
+            byte b = (byte)(before.Color.B + (after.Color.B - before.Color.B) * fraction);
+
+            return Color.FromArgb(a, r, g, b);
         }
     }
 }
