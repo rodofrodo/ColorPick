@@ -28,7 +28,7 @@
         <Border Width="182" Height="182" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="72,135,0,0" 
             CornerRadius="15" ClipToBounds="True" BorderBrush="White" BorderThickness="2">
             <Grid>
-                <Rectangle RadiusX="15" RadiusY="15">
+                <Rectangle RadiusX="15" RadiusY="15" x:Name="PreviewRect">
                     <Rectangle.Fill>
                         <SolidColorBrush Color="Red"/>
                     </Rectangle.Fill>
@@ -39,9 +39,9 @@
         <Border Width="345" Height="182" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="283,135,0,0" 
                 CornerRadius="15" ClipToBounds="True" BorderBrush="White">
             <Grid x:Name="ColorBox">
-                <Rectangle RadiusX="15" RadiusY="15">
+                <Rectangle RadiusX="15" RadiusY="15" x:Name="ColorRect">
                     <Rectangle.Fill>
-                        <SolidColorBrush x:Name="BaseColorBrush" Color="Red"/>
+                        <SolidColorBrush Color="Red"/>
                     </Rectangle.Fill>
                 </Rectangle>
                 <!-- White overlay -->
@@ -65,7 +65,7 @@
                 <!-- Selection marker -->
                 <Canvas HorizontalAlignment="Right" Width="345" Height="182"
                         VerticalAlignment="Top">
-                    <Ellipse
+                    <Ellipse Cursor="Hand"
                          Canvas.Right="0" Canvas.Top="0"
                          Width="24" Height="24"
                          Stroke="White" StrokeThickness="5"
@@ -105,7 +105,7 @@
         <Grid Width="556" Height="24" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,344,0,0">
             <!-- Selection ellipse -->
             <Canvas Width="556" Height="24">
-                <Ellipse Height="24"
+                <Ellipse Height="24" Cursor="Hand"
                      HorizontalAlignment="Left"
                      VerticalAlignment="Center"
                      Stroke="White" StrokeThickness="5"
