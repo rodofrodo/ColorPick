@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -160,11 +161,12 @@ namespace ColorPick
             Point center = new Point(centerX, centerY);
 
             // Sample composed color at the ellipse center
-            Color picked = SampleColorAt(center);
+            Color picked = SampleColorAtCenter(center, ellipse.ActualWidth, ellipse.ActualHeight);
 
             // Apply color to marker preview and preview rect
             ellipse.Fill = new SolidColorBrush(picked);
             PreviewRect.Fill = new SolidColorBrush(picked);
+            SetInfo(picked);
         }
 
         private void Ellipse_MouseUp(object sender, MouseButtonEventArgs e)
@@ -220,6 +222,14 @@ namespace ColorPick
             ellipse.ReleaseMouseCapture();
         }
 
+        private void SetInfo(Color color)
+        {
+            string hex = $"#{color.R:X2}{color.G:X2}{color.B:X2}";
+            string rgb = $"{color.R}, {color.G}, {color.B}";
+            hexLbl.Text = hex;
+            rgbLbl.Text = rgb;
+        }
+
         private Color InterpolateColor(LinearGradientBrush brush, double offset)
         {
             // clamp
@@ -269,26 +279,34 @@ namespace ColorPick
             return Color.FromArgb((byte)(oa * 255.0), (byte)r, (byte)g, (byte)b);
         }
 
-        // Sample the composed color at a point (local coords inside ColorBox)
-        private Color SampleColorAt(Point localPoint)
+        private Color SampleColorAtCenter(Point center, double markerWidth, double markerHeight)
         {
-            // normalize x and y in 0..1
-            double xNorm = Math.Max(0, Math.Min(1, localPoint.X / ColorBox.ActualWidth));
-            double yNorm = Math.Max(0, Math.Min(1, localPoint.Y / ColorBox.ActualHeight));
+            double boxW = ColorBox.ActualWidth;
+            double boxH = ColorBox.ActualHeight;
 
-            // base color (assumed solid)
+            // half sizes
+            double halfW = markerWidth / 2.0;
+            double halfH = markerHeight / 2.0;
+
+            // compute normalized coords using the *range of valid centers*
+            double denomX = Math.Max(1.0, boxW - markerWidth); // avoid div by zero
+            double denomY = Math.Max(1.0, boxH - markerHeight);
+
+            double xNorm = (center.X - halfW) / denomX;
+            double yNorm = (center.Y - halfH) / denomY;
+
+            // clamp
+            xNorm = Math.Max(0.0, Math.Min(1.0, xNorm));
+            yNorm = Math.Max(0.0, Math.Min(1.0, yNorm));
+
+            // base color
             Color baseColor = (BaseColorBrush as SolidColorBrush)?.Color ?? Colors.Black;
 
-            // sample white overlay at x (horizontal)
+            // sample overlays
             Color whiteSample = InterpolateColor(WhiteOverlayBrush, xNorm);
-
-            // composite white over base
             Color afterWhite = AlphaBlend(whiteSample, baseColor);
 
-            // sample black overlay at y (vertical)
             Color blackSample = InterpolateColor(BlackOverlayBrush, yNorm);
-
-            // composite black over result
             Color final = AlphaBlend(blackSample, afterWhite);
 
             return final;
