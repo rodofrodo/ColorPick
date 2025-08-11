@@ -150,8 +150,21 @@ namespace ColorPick
             left = Math.Max(0, Math.Min(left, canvas.ActualWidth - ellipse.ActualWidth));
             top = Math.Max(0, Math.Min(top, canvas.ActualHeight - ellipse.ActualHeight));
 
+            // Move ellipse (update UI first)
             Canvas.SetLeft(ellipse, left);
             Canvas.SetTop(ellipse, top);
+
+            // Compute center point of ellipse (in canvas coordinates)
+            double centerX = left + ellipse.ActualWidth / 2.0;
+            double centerY = top + ellipse.ActualHeight / 2.0;
+            Point center = new Point(centerX, centerY);
+
+            // Sample composed color at the ellipse center
+            Color picked = SampleColorAt(center);
+
+            // Apply color to marker preview and preview rect
+            ellipse.Fill = new SolidColorBrush(picked);
+            PreviewRect.Fill = new SolidColorBrush(picked);
         }
 
         private void Ellipse_MouseUp(object sender, MouseButtonEventArgs e)
@@ -191,7 +204,10 @@ namespace ColorPick
 
             // Get interpolated color at relativePos
             Color color = InterpolateColor(officialGradient, relativePos);
-            ColorRect.Fill = new SolidColorBrush(color);
+            if (BaseColorBrush is SolidColorBrush scb)
+                scb.Color = color;
+            else
+                ColorRect.Fill = new SolidColorBrush(color); // fallback
 
             // Set ellipse fill
             ellipse.Fill = new SolidColorBrush(color);
@@ -206,39 +222,76 @@ namespace ColorPick
 
         private Color InterpolateColor(LinearGradientBrush brush, double offset)
         {
-            // Clamp offset
+            // clamp
             offset = Math.Max(0, Math.Min(1, offset));
 
-            GradientStop before = brush.GradientStops[0];
-            GradientStop after = brush.GradientStops[brush.GradientStops.Count - 1];
+            // ensure stops are sorted by Offset
+            var stops = brush.GradientStops.OrderBy(gs => gs.Offset).ToList();
 
-            // Find gradient stops around offset
-            foreach (GradientStop gs in brush.GradientStops)
+            GradientStop before = stops.First();
+            GradientStop after = stops.Last();
+
+            foreach (var gs in stops)
             {
-                if (gs.Offset <= offset)
-                    before = gs;
-                if (gs.Offset >= offset)
-                {
-                    after = gs;
-                    break;
-                }
+                if (gs.Offset <= offset) before = gs;
+                if (gs.Offset >= offset) { after = gs; break; }
             }
 
-            // If offset is exactly on a stop
-            if (before == after)
-                return before.Color;
+            if (before == after) return before.Color;
 
-            // Calculate interpolation fraction between before.Offset and after.Offset
             double range = after.Offset - before.Offset;
-            double fraction = (offset - before.Offset) / range;
+            double frac = range == 0 ? 0 : (offset - before.Offset) / range;
 
-            // Interpolate each ARGB channel
-            byte a = (byte)(before.Color.A + (after.Color.A - before.Color.A) * fraction);
-            byte r = (byte)(before.Color.R + (after.Color.R - before.Color.R) * fraction);
-            byte g = (byte)(before.Color.G + (after.Color.G - before.Color.G) * fraction);
-            byte b = (byte)(before.Color.B + (after.Color.B - before.Color.B) * fraction);
+            byte a = (byte)(before.Color.A + (after.Color.A - before.Color.A) * frac);
+            byte r = (byte)(before.Color.R + (after.Color.R - before.Color.R) * frac);
+            byte g = (byte)(before.Color.G + (after.Color.G - before.Color.G) * frac);
+            byte b = (byte)(before.Color.B + (after.Color.B - before.Color.B) * frac);
 
             return Color.FromArgb(a, r, g, b);
+        }
+
+        private Color AlphaBlend(Color top, Color bottom)
+        {
+            double ta = top.A / 255.0;
+            double ba = bottom.A / 255.0;
+
+            // out alpha
+            double oa = ta + ba * (1 - ta);
+
+            // avoid divide-by-zero; if oa==0 return transparent
+            if (oa <= 0.00001)
+                return Color.FromArgb(0, 0, 0, 0);
+
+            double r = (top.R * ta + bottom.R * ba * (1 - ta)) / oa;
+            double g = (top.G * ta + bottom.G * ba * (1 - ta)) / oa;
+            double b = (top.B * ta + bottom.B * ba * (1 - ta)) / oa;
+
+            return Color.FromArgb((byte)(oa * 255.0), (byte)r, (byte)g, (byte)b);
+        }
+
+        // Sample the composed color at a point (local coords inside ColorBox)
+        private Color SampleColorAt(Point localPoint)
+        {
+            // normalize x and y in 0..1
+            double xNorm = Math.Max(0, Math.Min(1, localPoint.X / ColorBox.ActualWidth));
+            double yNorm = Math.Max(0, Math.Min(1, localPoint.Y / ColorBox.ActualHeight));
+
+            // base color (assumed solid)
+            Color baseColor = (BaseColorBrush as SolidColorBrush)?.Color ?? Colors.Black;
+
+            // sample white overlay at x (horizontal)
+            Color whiteSample = InterpolateColor(WhiteOverlayBrush, xNorm);
+
+            // composite white over base
+            Color afterWhite = AlphaBlend(whiteSample, baseColor);
+
+            // sample black overlay at y (vertical)
+            Color blackSample = InterpolateColor(BlackOverlayBrush, yNorm);
+
+            // composite black over result
+            Color final = AlphaBlend(blackSample, afterWhite);
+
+            return final;
         }
     }
 }
