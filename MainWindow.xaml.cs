@@ -222,12 +222,85 @@ namespace ColorPick
             ellipse.ReleaseMouseCapture();
         }
 
+        private CMYK ColorToCMYK(Color color)
+        {
+            double r = color.R / 255.0;
+            double g = color.G / 255.0;
+            double b = color.B / 255.0;
+            double k = 1 - Math.Max(r, Math.Max(g, b));
+            double c = (1 - r - k) / (1 - k);
+            double m = (1 - g - k) / (1 - k);
+            double y = (1 - b - k) / (1 - k);
+            // Handle black special case
+            if (Math.Abs(k - 1) < 1e-10)
+                c = m = y = 0;
+            return new CMYK(c, m, y, k);
+        }
+
+        private HSV ColorToHSV(Color color)
+        {
+            double r = color.R / 255.0;
+            double g = color.G / 255.0;
+            double b = color.B / 255.0;
+            double max = Math.Max(r, Math.Max(g, b));
+            double min = Math.Min(r, Math.Min(g, b));
+            double delta = max - min;
+            double h = 0;
+            if (delta != 0)
+            {
+                if (max == r)
+                    h = 60 * (((g - b) / delta) % 6);
+                else if (max == g)
+                    h = 60 * (((b - r) / delta) + 2);
+                else
+                    h = 60 * (((r - g) / delta) + 4);
+            }
+            if (h < 0) h += 360;
+            double s = (max == 0) ? 0 : delta / max;
+            double v = max;
+            return new HSV(h, s, v);
+        }
+
+        public HSL ColorToHSL(Color color)
+        {
+            double r = color.R / 255.0;
+            double g = color.G / 255.0;
+            double b = color.B / 255.0;
+            double max = Math.Max(r, Math.Max(g, b));
+            double min = Math.Min(r, Math.Min(g, b));
+            double delta = max - min;
+            double h = 0;
+            if (delta != 0)
+            {
+                if (max == r)
+                    h = 60 * (((g - b) / delta) % 6);
+                else if (max == g)
+                    h = 60 * (((b - r) / delta) + 2);
+                else
+                    h = 60 * (((r - g) / delta) + 4);
+            }
+            if (h < 0) h += 360;
+            double l = (max + min) / 2;
+            double s = (delta == 0) ? 0 : delta / (1 - Math.Abs(2 * l - 1));
+            return new HSL(h, s, l);
+        }
+
         private void SetInfo(Color color)
         {
             string hex = $"#{color.R:X2}{color.G:X2}{color.B:X2}";
             string rgb = $"{color.R}, {color.G}, {color.B}";
+            CMYK co = ColorToCMYK(color);
+            string cmyk = $"{Math.Round(co.C * 100)}%, {Math.Round(co.M * 100)}%, " +
+                $"{Math.Round(co.Y * 100)}%, {Math.Round(co.K * 100)}%";
+            HSV hh = ColorToHSV(color);
+            string hsv = $"{Math.Round(hh.H)}°, {Math.Round(hh.S * 100)}%, {Math.Round(hh.V * 100)}%";
+            HSL hl = ColorToHSL(color);
+            string hsl = $"{Math.Round(hl.H)}°, {Math.Round(hl.S * 100)}%, {Math.Round(hl.L * 100)}%";
             hexLbl.Text = hex;
             rgbLbl.Text = rgb;
+            cmykLbl.Text = cmyk;
+            hsvLbl.Text = hsv;
+            hslLbl.Text = hsl;
         }
 
         private Color InterpolateColor(LinearGradientBrush brush, double offset)
@@ -300,7 +373,7 @@ namespace ColorPick
             yNorm = Math.Max(0.0, Math.Min(1.0, yNorm));
 
             // base color
-            Color baseColor = (BaseColorBrush as SolidColorBrush)?.Color ?? Colors.Black;
+            Color baseColor = BaseColorBrush?.Color ?? Colors.Black;
 
             // sample overlays
             Color whiteSample = InterpolateColor(WhiteOverlayBrush, xNorm);
