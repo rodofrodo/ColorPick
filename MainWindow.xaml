@@ -66,9 +66,9 @@
         </Border>
         <Grid Margin="275,127,0,0">
             <!-- Selection marker -->
-            <Canvas HorizontalAlignment="Left" Width="361" Height="198"
+            <Canvas x:Name="mainCanvas" HorizontalAlignment="Left" Width="361" Height="198"
                 VerticalAlignment="Top">
-                <Ellipse Cursor="Hand"
+                <Ellipse x:Name="mainEllipse" Cursor="Hand"
                      Canvas.Right="0" Canvas.Top="0"
                      Width="24" Height="24"
                      Stroke="White" StrokeThickness="5"
@@ -106,8 +106,8 @@
         </Border>
         <Grid Width="556" Height="24" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,344,0,0">
             <!-- Selection ellipse -->
-            <Canvas Width="556" Height="24">
-                <Ellipse Height="24" Cursor="Hand"
+            <Canvas x:Name="hueCanvas" Width="556" Height="24">
+                <Ellipse x:Name="hueEllipse" Height="24" Cursor="Hand"
                      HorizontalAlignment="Left"
                      VerticalAlignment="Center"
                      Stroke="White" StrokeThickness="5"
