@@ -204,6 +204,14 @@ namespace ColorPick
             hueEllipse.ReleaseMouseCapture();
         }
 
+        private byte ToByteClamped(double value)
+        {
+            if (value >= 254.5) return 255;
+            if (value <= 0.5) return 0;
+            int iv = (int)Math.Round(value, MidpointRounding.AwayFromZero);
+            return (byte)Math.Max(0, Math.Min(255, iv));
+        }
+
         private CMYK ColorToCMYK(Color color)
         {
             double r = color.R / 255.0;
@@ -307,16 +315,19 @@ namespace ColorPick
             double range = after.Offset - before.Offset;
             double frac = range == 0 ? 0 : (offset - before.Offset) / range;
 
-            byte a = (byte)(before.Color.A + (after.Color.A - before.Color.A) * frac);
-            byte r = (byte)(before.Color.R + (after.Color.R - before.Color.R) * frac);
-            byte g = (byte)(before.Color.G + (after.Color.G - before.Color.G) * frac);
-            byte b = (byte)(before.Color.B + (after.Color.B - before.Color.B) * frac);
+            byte a = ToByteClamped(before.Color.A + (after.Color.A - before.Color.A) * frac);
+            byte r = ToByteClamped(before.Color.R + (after.Color.R - before.Color.R) * frac);
+            byte g = ToByteClamped(before.Color.G + (after.Color.G - before.Color.G) * frac);
+            byte b = ToByteClamped(before.Color.B + (after.Color.B - before.Color.B) * frac);
 
             return Color.FromArgb(a, r, g, b);
         }
 
         private Color AlphaBlend(Color top, Color bottom)
         {
+            if (top.A == 255) return top;   // top fully opaque
+            if (top.A == 0) return bottom;  // top fully transparent
+
             double ta = top.A / 255.0;
             double ba = bottom.A / 255.0;
 
@@ -331,7 +342,12 @@ namespace ColorPick
             double g = (top.G * ta + bottom.G * ba * (1 - ta)) / oa;
             double b = (top.B * ta + bottom.B * ba * (1 - ta)) / oa;
 
-            return Color.FromArgb((byte)(oa * 255.0), (byte)r, (byte)g, (byte)b);
+            return Color.FromArgb(
+                ToByteClamped(oa * 255.0),
+                ToByteClamped(r),
+                ToByteClamped(g),
+                ToByteClamped(b)
+            );
         }
 
         private Color SampleColorAtCenter(Point center, double markerWidth, double markerHeight)
@@ -366,5 +382,93 @@ namespace ColorPick
 
             return final;
         }
+
+        public Color HSVToColor(double h, double s, double v)
+        {
+            double c = v * s;
+            double x = c * (1 - Math.Abs(((h / 60.0) % 2) - 1));
+            double m = v - c;
+
+            double r1 = 0, g1 = 0, b1 = 0;
+            if (h < 60) { r1 = c; g1 = x; b1 = 0; }
+            else if (h < 120) { r1 = x; g1 = c; b1 = 0; }
+            else if (h < 180) { r1 = 0; g1 = c; b1 = x; }
+            else if (h < 240) { r1 = 0; g1 = x; b1 = c; }
+            else if (h < 300) { r1 = x; g1 = 0; b1 = c; }
+            else { r1 = c; g1 = 0; b1 = x; }
+
+            byte R = (byte)Math.Round((r1 + m) * 255.0);
+            byte G = (byte)Math.Round((g1 + m) * 255.0);
+            byte B = (byte)Math.Round((b1 + m) * 255.0);
+            return Color.FromRgb(R, G, B);
+        }
+
+        private void SetPickersFromColor(Color color)
+        {
+            // Convert to HSV
+            HSV hsv = ColorToHSV(color);
+            double H = hsv.H; // 0..360
+            double S = hsv.S; // 0..1
+            double V = hsv.V; // 0..1
+
+            // If layout not ready, schedule again after Loaded
+            if (hueCanvas.ActualWidth <= 0 || hueEllipse.ActualWidth <= 0
+                || mainCanvas.ActualWidth <= 0 || mainEllipse.ActualWidth <= 0
+                || ColorBox.ActualWidth <= 0 || ColorBox.ActualHeight <= 0)
+            {
+                Dispatcher.BeginInvoke(new Action(() => SetPickersFromColor(color)),
+                    System.Windows.Threading.DispatcherPriority.Loaded);
+                return;
+            }
+
+            // --- Hue picker position ---
+            double hueRange = hueCanvas.ActualWidth - hueEllipse.ActualWidth;
+            double hueRelative = H / 360.0; // map 0..360 -> 0..1
+            double hueLeft = hueRelative * hueRange;
+            Canvas.SetLeft(hueEllipse, hueLeft);
+            // put HuePicker vertically centered (optional)
+            Canvas.SetTop(hueEllipse, (hueCanvas.ActualHeight - hueEllipse.ActualHeight) / 2.0);
+
+            // Set base hue brush to pure hue color (S=1,V=1)
+            Color pureHue = HSVToColor(H, 1.0, 1.0);
+            if (BaseColorBrush is SolidColorBrush scb)
+                scb.Color = pureHue;
+            else
+                ColorRect.Fill = new SolidColorBrush(pureHue); // fallback
+
+            // --- Main picker (S,V) position ---
+            // mapping: xNorm = S (0 left -> white, 1 right -> hue)
+            //          yNorm = 1 - V (0 top -> bright, 1 bottom -> black)
+            double xNorm = S;
+            double yNorm = 1.0 - V;
+
+            double rangeX = mainCanvas.ActualWidth - mainEllipse.ActualWidth;
+            double rangeY = mainCanvas.ActualHeight - mainEllipse.ActualHeight;
+
+            double left = xNorm * rangeX;
+            double top = yNorm * rangeY;
+
+            Canvas.SetLeft(mainEllipse, left);
+            Canvas.SetTop(mainEllipse, top);
+
+            // --- Update preview and marker fill by sampling the composed ColorBox ---
+            // Compute the marker center in PickerCanvas coords:
+            var centerInPickerCanvas = new Point(left + mainEllipse.ActualWidth / 2.0,
+                                                 top + mainEllipse.ActualHeight / 2.0);
+
+            // Translate center to ColorBox coordinates (safe even if origins differ)
+            Point centerInColorBox = mainCanvas.TranslatePoint(centerInPickerCanvas, ColorBox);
+
+            // Use your existing SampleColorAtCenter (expects center in ColorBox coords)
+            Color picked = SampleColorAtCenter(centerInColorBox, mainEllipse.ActualWidth, mainEllipse.ActualHeight);
+
+            mainEllipse.Fill = new SolidColorBrush(picked);
+            PreviewRect.Fill = new SolidColorBrush(picked);
+
+            // optional: update hex textbox (if you have one)
+            // HexTextBox.Text = $"#{picked.R:X2}{picked.G:X2}{picked.B:X2}";
+        }
+
+
     }
 }
