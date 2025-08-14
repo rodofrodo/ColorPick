@@ -130,41 +130,29 @@ namespace ColorPick
         private void Ellipse_MouseDown(object sender, MouseButtonEventArgs e)
         {
             isDragging = true;
-            var ellipse = sender as Ellipse;
-            clickPosition = e.GetPosition(ellipse);
-            ellipse.CaptureMouse();
+            clickPosition = e.GetPosition(mainEllipse);
+            mainEllipse.CaptureMouse();
         }
 
         private void Ellipse_MouseMove(object sender, MouseEventArgs e)
         {
             if (!isDragging) return;
 
-            var ellipse = sender as Ellipse;
-            var canvas = ellipse.Parent as Canvas;
-
-            Point mousePos = e.GetPosition(canvas);
-
+            Point mousePos = e.GetPosition(mainCanvas);
             double left = mousePos.X - clickPosition.X;
             double top = mousePos.Y - clickPosition.Y;
+            left = Math.Max(0, Math.Min(left, mainCanvas.ActualWidth - mainEllipse.ActualWidth));
+            top = Math.Max(0, Math.Min(top, mainCanvas.ActualHeight - mainEllipse.ActualHeight));
 
-            // Clamp inside the canvas
-            left = Math.Max(0, Math.Min(left, canvas.ActualWidth - ellipse.ActualWidth));
-            top = Math.Max(0, Math.Min(top, canvas.ActualHeight - ellipse.ActualHeight));
+            Canvas.SetLeft(mainEllipse, left);
+            Canvas.SetTop(mainEllipse, top);
 
-            // Move ellipse (update UI first)
-            Canvas.SetLeft(ellipse, left);
-            Canvas.SetTop(ellipse, top);
-
-            // Compute center point of ellipse (in canvas coordinates)
-            double centerX = left + ellipse.ActualWidth / 2.0;
-            double centerY = top + ellipse.ActualHeight / 2.0;
+            double centerX = left + mainEllipse.ActualWidth / 2.0;
+            double centerY = top + mainEllipse.ActualHeight / 2.0;
             Point center = new Point(centerX, centerY);
 
-            // Sample composed color at the ellipse center
-            Color picked = SampleColorAtCenter(center, ellipse.ActualWidth, ellipse.ActualHeight);
-
-            // Apply color to marker preview and preview rect
-            ellipse.Fill = new SolidColorBrush(picked);
+            Color picked = SampleColorAtCenter(center, mainEllipse.ActualWidth, mainEllipse.ActualHeight);
+            mainEllipse.Fill = new SolidColorBrush(picked);
             PreviewRect.Fill = new SolidColorBrush(picked);
             SetInfo(picked);
         }
@@ -172,54 +160,48 @@ namespace ColorPick
         private void Ellipse_MouseUp(object sender, MouseButtonEventArgs e)
         {
             isDragging = false;
-            var ellipse = sender as Ellipse;
-            ellipse.ReleaseMouseCapture();
+            mainEllipse.ReleaseMouseCapture();
         }
 
         private void HuePicker_MouseDown(object sender, MouseButtonEventArgs e)
         {
             isDraggingHue = true;
-            var ellipse = sender as Ellipse;
-            clickPositionHue = e.GetPosition(ellipse);
-            ellipse.CaptureMouse();
+            clickPositionHue = e.GetPosition(hueEllipse);
+            hueEllipse.CaptureMouse();
         }
 
         private void HuePicker_MouseMove(object sender, MouseEventArgs e)
         {
             if (!isDraggingHue) return;
 
-            var ellipse = sender as Ellipse;
-            var canvas = ellipse.Parent as Canvas;
-
-            Point mousePos = e.GetPosition(canvas);
-
+            Point mousePos = e.GetPosition(hueCanvas);
             double left = mousePos.X - clickPositionHue.X;
+            left = Math.Max(0, Math.Min(left, hueCanvas.ActualWidth - hueEllipse.ActualWidth));
 
-            // Clamp horizontally inside canvas bounds
-            left = Math.Max(0, Math.Min(left, canvas.ActualWidth - ellipse.ActualWidth));
+            Canvas.SetLeft(hueEllipse, left);
+            double relativePos = left / (hueCanvas.ActualWidth - hueEllipse.ActualWidth);
 
-            // Set horizontal position only, vertical stays fixed
-            Canvas.SetLeft(ellipse, left);
-
-            // Calculate relative position 0..1 across the gradient
-            double relativePos = left / (canvas.ActualWidth - ellipse.ActualWidth);
-
-            // Get interpolated color at relativePos
             Color color = InterpolateColor(officialGradient, relativePos);
             if (BaseColorBrush is SolidColorBrush scb)
                 scb.Color = color;
             else
                 ColorRect.Fill = new SolidColorBrush(color); // fallback
+            hueEllipse.Fill = new SolidColorBrush(color);
 
-            // Set ellipse fill
-            ellipse.Fill = new SolidColorBrush(color);
+            double centerX = Canvas.GetLeft(mainEllipse) + mainEllipse.ActualWidth / 2.0;
+            double centerY = Canvas.GetTop(mainEllipse) + mainEllipse.ActualHeight / 2.0;
+            Point center = new Point(centerX, centerY);
+
+            Color picked = SampleColorAtCenter(center, mainEllipse.ActualWidth, mainEllipse.ActualHeight);
+            mainEllipse.Fill = new SolidColorBrush(picked);
+            PreviewRect.Fill = new SolidColorBrush(picked);
+            SetInfo(picked);
         }
 
         private void HuePicker_MouseUp(object sender, MouseButtonEventArgs e)
         {
             isDraggingHue = false;
-            var ellipse = sender as Ellipse;
-            ellipse.ReleaseMouseCapture();
+            hueEllipse.ReleaseMouseCapture();
         }
 
         private CMYK ColorToCMYK(Color color)
