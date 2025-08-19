@@ -403,72 +403,43 @@ namespace ColorPick
             return Color.FromRgb(R, G, B);
         }
 
-        private void SetPickersFromColor(Color color)
+        private void OnKeyDown_TEXTBOX(object sender, KeyEventArgs e)
         {
-            // Convert to HSV
-            HSV hsv = ColorToHSV(color);
-            double H = hsv.H; // 0..360
-            double S = hsv.S; // 0..1
-            double V = hsv.V; // 0..1
-
-            // If layout not ready, schedule again after Loaded
-            if (hueCanvas.ActualWidth <= 0 || hueEllipse.ActualWidth <= 0
-                || mainCanvas.ActualWidth <= 0 || mainEllipse.ActualWidth <= 0
-                || ColorBox.ActualWidth <= 0 || ColorBox.ActualHeight <= 0)
+            if (!(sender is TextBox tb)) return;
+            if (tb.Name == "rgbLbl")
             {
-                Dispatcher.BeginInvoke(new Action(() => SetPickersFromColor(color)),
-                    System.Windows.Threading.DispatcherPriority.Loaded);
-                return;
+                TryApplyColorFromTextBox(tb, ColorType.Rgb);
             }
-
-            // --- Hue picker position ---
-            double hueRange = hueCanvas.ActualWidth - hueEllipse.ActualWidth;
-            double hueRelative = H / 360.0; // map 0..360 -> 0..1
-            double hueLeft = hueRelative * hueRange;
-            Canvas.SetLeft(hueEllipse, hueLeft);
-            // put HuePicker vertically centered (optional)
-            Canvas.SetTop(hueEllipse, (hueCanvas.ActualHeight - hueEllipse.ActualHeight) / 2.0);
-
-            // Set base hue brush to pure hue color (S=1,V=1)
-            Color pureHue = HSVToColor(H, 1.0, 1.0);
-            if (BaseColorBrush is SolidColorBrush scb)
-                scb.Color = pureHue;
-            else
-                ColorRect.Fill = new SolidColorBrush(pureHue); // fallback
-
-            // --- Main picker (S,V) position ---
-            // mapping: xNorm = S (0 left -> white, 1 right -> hue)
-            //          yNorm = 1 - V (0 top -> bright, 1 bottom -> black)
-            double xNorm = S;
-            double yNorm = 1.0 - V;
-
-            double rangeX = mainCanvas.ActualWidth - mainEllipse.ActualWidth;
-            double rangeY = mainCanvas.ActualHeight - mainEllipse.ActualHeight;
-
-            double left = xNorm * rangeX;
-            double top = yNorm * rangeY;
-
-            Canvas.SetLeft(mainEllipse, left);
-            Canvas.SetTop(mainEllipse, top);
-
-            // --- Update preview and marker fill by sampling the composed ColorBox ---
-            // Compute the marker center in PickerCanvas coords:
-            var centerInPickerCanvas = new Point(left + mainEllipse.ActualWidth / 2.0,
-                                                 top + mainEllipse.ActualHeight / 2.0);
-
-            // Translate center to ColorBox coordinates (safe even if origins differ)
-            Point centerInColorBox = mainCanvas.TranslatePoint(centerInPickerCanvas, ColorBox);
-
-            // Use your existing SampleColorAtCenter (expects center in ColorBox coords)
-            Color picked = SampleColorAtCenter(centerInColorBox, mainEllipse.ActualWidth, mainEllipse.ActualHeight);
-
-            mainEllipse.Fill = new SolidColorBrush(picked);
-            PreviewRect.Fill = new SolidColorBrush(picked);
-
-            // optional: update hex textbox (if you have one)
-            // HexTextBox.Text = $"#{picked.R:X2}{picked.G:X2}{picked.B:X2}";
         }
 
+        private void OnLostFocus_TEXTBOX(object sender, RoutedEventArgs e)
+        {
+        }
 
+        private void TryApplyColorFromTextBox(TextBox tb, ColorType ct)
+        {
+            if (string.IsNullOrWhiteSpace(tb.Text)) return;
+            try
+            {
+                Color color = Color.FromRgb(0, 0, 0);
+                switch (ct)
+                {
+                    case ColorType.Rgb:
+                        string[] rgbParts = tb.Text.Split(',');
+                        if (rgbParts.Length != 3) return;
+                        byte r = byte.Parse(rgbParts[0].Trim());
+                        byte g = byte.Parse(rgbParts[1].Trim());
+                        byte b = byte.Parse(rgbParts[2].Trim());
+                        color = Color.FromRgb(r, g, b);
+                        break;
+                }
+                //SetPickersFromColor(color);
+                mainEllipse.Fill = new SolidColorBrush(color);
+                PreviewRect.Fill = new SolidColorBrush(color);
+            }
+            catch
+            {
+            }
+        }
     }
 }
