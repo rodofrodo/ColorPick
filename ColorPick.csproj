@@ -73,6 +73,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CMYK.cs" />
+    <Compile Include="ColorType.cs" />
     <Compile Include="HSL.cs" />
     <Compile Include="HSV.cs" />
     <Compile Include="MainWindow.xaml.cs">
