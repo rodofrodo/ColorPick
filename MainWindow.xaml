@@ -127,19 +127,19 @@
         <!-- Text boxes to input values -->
         <TextBox x:Name="hexLbl" HorizontalAlignment="Right" Margin="0,411,364,0" TextWrapping="Wrap" Text="#FF0000" 
                  VerticalAlignment="Top" Width="173" TextAlignment="Right" FontFamily="Inter" FontSize="14" 
-                 Background="{x:Null}" Foreground="White" BorderThickness="0"/>
+                 Background="{x:Null}" Foreground="White" BorderThickness="0" KeyDown="OnKeyDown_TEXTBOX" LostFocus="OnLostFocus_TEXTBOX"/>
         <TextBox x:Name="rgbLbl" HorizontalAlignment="Right" Margin="0,462,364,0" TextWrapping="Wrap" Text="255, 0, 0" 
                  VerticalAlignment="Top" Width="173" TextAlignment="Right" FontFamily="Inter" FontSize="14" 
-                 Background="{x:Null}" Foreground="White" BorderThickness="0"/>
+                 Background="{x:Null}" Foreground="White" BorderThickness="0" KeyDown="OnKeyDown_TEXTBOX" LostFocus="OnLostFocus_TEXTBOX"/>
         <TextBox x:Name="cmykLbl" HorizontalAlignment="Right" Margin="0,514,364,0" TextWrapping="Wrap" Text="0%, 100%, 100%, 0%" 
                  VerticalAlignment="Top" Width="173" TextAlignment="Right" FontFamily="Inter" FontSize="14" 
-                 Background="{x:Null}" Foreground="White" BorderThickness="0"/>
+                 Background="{x:Null}" Foreground="White" BorderThickness="0" KeyDown="OnKeyDown_TEXTBOX" LostFocus="OnLostFocus_TEXTBOX"/>
         <TextBox x:Name="hsvLbl" HorizontalAlignment="Right" Margin="0,411,79,0" TextWrapping="Wrap" Text="0°, 100%, 100%" 
                  VerticalAlignment="Top" Width="173" TextAlignment="Right" FontFamily="Inter" FontSize="14" 
-                 Background="{x:Null}" Foreground="White" BorderThickness="0"/>
+                 Background="{x:Null}" Foreground="White" BorderThickness="0" KeyDown="OnKeyDown_TEXTBOX" LostFocus="OnLostFocus_TEXTBOX"/>
         <TextBox x:Name="hslLbl" HorizontalAlignment="Right" Margin="0,462,79,0" TextWrapping="Wrap" Text="0°, 100%, 50%" 
                  VerticalAlignment="Top" Width="173" TextAlignment="Right" FontFamily="Inter" FontSize="14" 
-                 Background="{x:Null}" Foreground="White" BorderThickness="0"/>
+                 Background="{x:Null}" Foreground="White" BorderThickness="0" KeyDown="OnKeyDown_TEXTBOX" LostFocus="OnLostFocus_TEXTBOX"/>
         <!-- Buttons -->
 
         <Border x:Name="pickColorBtn" BorderThickness="3" CornerRadius="20" 
