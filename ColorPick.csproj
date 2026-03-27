@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>colorpick_ico.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="PresentationFramework.Aero2" />
@@ -69,6 +72,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CMYK.cs" />
+    <Compile Include="ColorType.cs" />
+    <Compile Include="HSL.cs" />
+    <Compile Include="HSV.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -99,6 +106,27 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\EXIT_BTN.png" />
+    <Resource Include="Resources\EXIT_HOV.png" />
+    <Resource Include="Resources\MINI_BTN.png" />
+    <Resource Include="Resources\MINI_HOV.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\colorpick_bg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\triumvirate_logo_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="colorpick_ico.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\white_round_rect.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\gray_round_rect.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

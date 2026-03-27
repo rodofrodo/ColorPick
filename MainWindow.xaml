@@ -4,11 +4,178 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ColorPick"
-        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="ColorPick" Height="679" Width="700"
+        ResizeMode="CanMinimize"
         WindowStyle="None"
-        AllowsTransparency="False"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        Background="{x:Null}" AllowsTransparency="True">
+    <Grid>
+        <Image HorizontalAlignment="Left" Height="679" Margin="0,0,0,0" VerticalAlignment="Top" Width="700" Source="/Resources/colorpick_bg.png"/>
+        <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="700" Height="35" MouseLeftButtonDown="OnMouseLeft_TitleBar"/>
+        <Image x:Name="exit_btn" HorizontalAlignment="Left" Height="16" Margin="657,10,0,0" VerticalAlignment="Top" Width="32" Source="/Resources/EXIT_BTN.png" MouseEnter="OnMouseEnter_EXIT" MouseLeave="OnMouseLeave_EXIT" MouseDown="OnMouseDown_EXIT"/>
+        <Image x:Name="mini_btn" HorizontalAlignment="Left" Height="16" Margin="620,10,0,0" VerticalAlignment="Top" Width="32" Source="/Resources/MINI_BTN.png" MouseEnter="OnMouseEnter_MINI" MouseLeave="OnMouseLeave_MINI" MouseDown="OnMouseDown_MINI"/>
+        <Label x:Name="appname" Content="ColorPick" HorizontalAlignment="Left" Margin="49,35,0,0" VerticalAlignment="Top" FontFamily="Product Sans" FontWeight="Bold" FontSize="40">
+            <Label.Foreground>
+                <LinearGradientBrush x:Name="LGB_colorpick" StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#5E0000" Offset="0"/>
+                    <GradientStop Color="#4C0070" Offset=".8"/>
+                </LinearGradientBrush>
+            </Label.Foreground>
+        </Label>
+        <Image x:Name="triumvirate" HorizontalAlignment="Left" Height="15" Margin="260,57,0,0" VerticalAlignment="Top" Width="132" Source="/Resources/triumvirate_logo_small.png"/>
+        <!-- The preview color box -->
+        <Border Width="182" Height="182" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="72,135,0,0" 
+            CornerRadius="15" ClipToBounds="True" BorderBrush="White" BorderThickness="2">
+            <Grid>
+                <Rectangle RadiusX="15" RadiusY="15" x:Name="PreviewRect">
+                    <Rectangle.Fill>
+                        <SolidColorBrush Color="Red"/>
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Grid>
+        </Border>
+        <!-- The color picker box -->
+        <Border Width="345" Height="182" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="283,135,0,0" 
+                CornerRadius="15" ClipToBounds="True" BorderBrush="White">
+            <Grid x:Name="ColorBox">
+                <Rectangle RadiusX="15" RadiusY="15" x:Name="ColorRect">
+                    <Rectangle.Fill>
+                        <SolidColorBrush x:Name="BaseColorBrush" Color="Red"/>
+                    </Rectangle.Fill>
+                </Rectangle>
+                <!-- White overlay -->
+                <Rectangle RadiusX="15" RadiusY="15">
+                    <Rectangle.Fill>
+                        <LinearGradientBrush x:Name="WhiteOverlayBrush" StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="#FFFFFFFF" Offset="0"/>
+                            <GradientStop Color="#00FFFFFF" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Rectangle.Fill>
+                </Rectangle>
+                <!-- Black overlay -->
+                <Rectangle RadiusX="15" RadiusY="15">
+                    <Rectangle.Fill>
+                        <LinearGradientBrush x:Name="BlackOverlayBrush" StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#00000000" Offset="0"/>
+                            <GradientStop Color="#FF000000" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Grid>
+        </Border>
+        <Grid Margin="275,127,0,0">
+            <!-- Selection marker -->
+            <Canvas x:Name="mainCanvas" HorizontalAlignment="Left" Width="361" Height="198"
+                VerticalAlignment="Top">
+                <Ellipse x:Name="mainEllipse" Cursor="Hand"
+                     Canvas.Right="0" Canvas.Top="0"
+                     Width="24" Height="24"
+                     Stroke="White" StrokeThickness="5"
+                     Fill="Red"
+                     MouseDown="Ellipse_MouseDown"
+                     MouseMove="Ellipse_MouseMove"
+                     MouseUp="Ellipse_MouseUp"/>
+            </Canvas>
+        </Grid>
+        <!-- The rainbow -->
+        <Border Width="556" Height="8" CornerRadius="5" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="72,352,0,0">
+            <Grid>
+                <!-- Hue gradient bar -->
+                <Rectangle RadiusX="5" RadiusY="5">
+                    <Rectangle.Fill>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0" x:Name="officialGradient">
+                            <GradientStop Color="#FFFF0000" Offset="0"/>
+                            <!-- Red -->
+                            <GradientStop Color="#FFFFFF00" Offset="0.17"/>
+                            <!-- Yellow -->
+                            <GradientStop Color="#FF00FF00" Offset="0.33"/>
+                            <!-- Green -->
+                            <GradientStop Color="#FF00FFFF" Offset="0.5"/>
+                            <!-- Cyan -->
+                            <GradientStop Color="#FF0000FF" Offset="0.67"/>
+                            <!-- Blue -->
+                            <GradientStop Color="#FFFF00FF" Offset="0.83"/>
+                            <!-- Magenta -->
+                            <GradientStop Color="#FFFF0000" Offset="1"/>
+                            <!-- Red again -->
+                        </LinearGradientBrush>
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Grid>
+        </Border>
+        <Grid Width="556" Height="24" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,344,0,0">
+            <!-- Selection ellipse -->
+            <Canvas x:Name="hueCanvas" Width="556" Height="24">
+                <Ellipse x:Name="hueEllipse" Height="24" Cursor="Hand"
+                     HorizontalAlignment="Left"
+                     VerticalAlignment="Center"
+                     Stroke="White" StrokeThickness="5"
+                     Fill="Red" Width="24"
+                     Canvas.Left="0" Canvas.Top="0"
+                     MouseDown="HuePicker_MouseDown"
+                     MouseMove="HuePicker_MouseMove"
+                     MouseUp="HuePicker_MouseUp"/>
+            </Canvas>
+        </Grid>
+        <!-- Text blocks with values -->
+        <TextBlock HorizontalAlignment="Left" Margin="79,408,0,0" TextWrapping="Wrap" Text="HEX" VerticalAlignment="Top" FontFamily="Inter" Foreground="White" FontSize="20" FontWeight="Bold"/>
+        <TextBlock HorizontalAlignment="Left" Margin="79,460,0,0" TextWrapping="Wrap" Text="RGB" VerticalAlignment="Top" FontFamily="Inter" Foreground="White" FontSize="20" FontWeight="Bold"/>
+        <TextBlock HorizontalAlignment="Left" Margin="79,512,0,0" TextWrapping="Wrap" Text="CMYK" VerticalAlignment="Top" FontFamily="Inter" Foreground="White" FontSize="20" FontWeight="Bold"/>
+        <TextBlock HorizontalAlignment="Left" Margin="364,408,0,0" TextWrapping="Wrap" Text="HSV" VerticalAlignment="Top" FontFamily="Inter" Foreground="White" FontSize="20" FontWeight="Bold"/>
+        <TextBlock HorizontalAlignment="Left" Margin="364,460,0,0" TextWrapping="Wrap" Text="HSL" VerticalAlignment="Top" FontFamily="Inter" Foreground="White" FontSize="20" FontWeight="Bold"/>
+        <!-- Text boxes to input values -->
+        <TextBox x:Name="hexLbl" HorizontalAlignment="Right" Margin="0,411,364,0" TextWrapping="Wrap" Text="#FF0000" 
+                 VerticalAlignment="Top" Width="173" TextAlignment="Right" FontFamily="Inter" FontSize="14" 
+                 Background="{x:Null}" Foreground="White" BorderThickness="0" KeyDown="OnKeyDown_TEXTBOX" LostFocus="OnLostFocus_TEXTBOX"/>
+        <TextBox x:Name="rgbLbl" HorizontalAlignment="Right" Margin="0,462,364,0" TextWrapping="Wrap" Text="255, 0, 0" 
+                 VerticalAlignment="Top" Width="173" TextAlignment="Right" FontFamily="Inter" FontSize="14" 
+                 Background="{x:Null}" Foreground="White" BorderThickness="0" KeyDown="OnKeyDown_TEXTBOX" LostFocus="OnLostFocus_TEXTBOX"/>
+        <TextBox x:Name="cmykLbl" HorizontalAlignment="Right" Margin="0,514,364,0" TextWrapping="Wrap" Text="0%, 100%, 100%, 0%" 
+                 VerticalAlignment="Top" Width="173" TextAlignment="Right" FontFamily="Inter" FontSize="14" 
+                 Background="{x:Null}" Foreground="White" BorderThickness="0" KeyDown="OnKeyDown_TEXTBOX" LostFocus="OnLostFocus_TEXTBOX"/>
+        <TextBox x:Name="hsvLbl" HorizontalAlignment="Right" Margin="0,411,79,0" TextWrapping="Wrap" Text="0°, 100%, 100%" 
+                 VerticalAlignment="Top" Width="173" TextAlignment="Right" FontFamily="Inter" FontSize="14" 
+                 Background="{x:Null}" Foreground="White" BorderThickness="0" KeyDown="OnKeyDown_TEXTBOX" LostFocus="OnLostFocus_TEXTBOX"/>
+        <TextBox x:Name="hslLbl" HorizontalAlignment="Right" Margin="0,462,79,0" TextWrapping="Wrap" Text="0°, 100%, 50%" 
+                 VerticalAlignment="Top" Width="173" TextAlignment="Right" FontFamily="Inter" FontSize="14" 
+                 Background="{x:Null}" Foreground="White" BorderThickness="0" KeyDown="OnKeyDown_TEXTBOX" LostFocus="OnLostFocus_TEXTBOX"/>
+        <!-- Buttons -->
 
+        <Border x:Name="pickColorBtn" BorderThickness="3" CornerRadius="20" 
+                HorizontalAlignment="Left" VerticalAlignment="Top" Margin="72,584,0,0"
+                Width="167" Height="42" Background="White" 
+                MouseEnter="OnMouseEnter_PickBtn" MouseLeave="OnMouseLeave_PickBtn"
+                Cursor="Hand">
+            <Border.BorderBrush>
+                <LinearGradientBrush x:Name="LGB" StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#FF0000" Offset="1"/>
+                    <GradientStop Color="#FC65FF" Offset=".5"/>
+                    <GradientStop Color="#4D009A" Offset="0"/>
+                </LinearGradientBrush>
+            </Border.BorderBrush>
+            <Border.Triggers>
+                <EventTrigger RoutedEvent="Border.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <PointAnimation Storyboard.TargetName="LGB" 
+                        Storyboard.TargetProperty="StartPoint" 
+                        From="0,0" To="1,0" Duration="00:00:2"
+                        AutoReverse="True" RepeatBehavior="Forever"/>
+                            <PointAnimation Storyboard.TargetName="LGB" 
+                        Storyboard.TargetProperty="EndPoint" 
+                        From="1,1" To="0,1" Duration="00:00:2"
+                        AutoReverse="True" RepeatBehavior="Forever"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Border.Triggers>
+            <TextBlock x:Name="pickColorLbl" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Pick a color" FontFamily="Inter" Foreground="Black" FontSize="20" FontWeight="Bold"/>
+        </Border>
+        <Border x:Name="paletteBtn" Width="118" Height="42" HorizontalAlignment="Left" VerticalAlignment="Top" 
+                Margin="253,584,0,0" Background="#202020" CornerRadius="20" Cursor="Hand"
+                MouseEnter="OnMouseEnter_PaletteBtn" MouseLeave="OnMouseLeave_PaletteBtn">
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Palette" FontFamily="Inter" Foreground="White" FontSize="20" FontWeight="Bold"/>
+        </Border>
+    </Grid>
 </Window>
